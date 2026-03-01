@@ -41,10 +41,11 @@ const navItems: NavItem[] = [
     name: "Transaction",
     icon: <GridIcon />,
     subItems: [
-      { name: "All Transactions", path: "/basic-tables" },
-      { name: "Deposit", path: "/basic-tables" },
-      { name: "Beli Hewan", path: "/basic-tables" },
+      { name: "All Transactions", path: "/transactions/all-transactions" },
+      { name: "Deposit", path: "/transactions/deposit" },
+      { name: "Beli Hewan", path: "/transactions/beli-hewan" },
       { name: "Jual Hewan", path: "/basic-tables" },
+      { name: "Add Transaction", path: "/transactions/transaction-form" },
     ],
   },
   {
