@@ -44,7 +44,7 @@ const navItems: NavItem[] = [
       { name: "All Transactions", path: "/transactions/all-transactions" },
       { name: "Deposit", path: "/transactions/deposit" },
       { name: "Beli Hewan", path: "/transactions/beli-hewan" },
-      { name: "Jual Hewan", path: "/basic-tables" },
+      { name: "Jual Hewan", path: "/transactions/jual-hewan" },
       { name: "Add Transaction", path: "/transactions/transaction-form" },
     ],
   },
