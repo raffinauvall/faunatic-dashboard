@@ -45,23 +45,14 @@ export async function POST(req: Request) {
   let insertedAnimalId: string | null = animal_id ?? null;
 
   try {
-    /* =========================
-       DEPOSIT
-    ========================== */
     if (type === "deposit") {
       newBalance += amount;
     }
 
-    /* =========================
-       TARIK TUNAI
-    ========================== */
     if (type === "tarik_tunai") {
       newBalance -= amount;
     }
 
-    /* =========================
-       BELI HEWAN
-    ========================== */
     if (type === "beli_hewan") {
       newBalance -= amount;
 
