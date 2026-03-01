@@ -2,12 +2,13 @@ import { supabase } from "@/lib/supabase";
 import { NextResponse } from "next/server"
 
 type Context = {
-  params: Promise <{
+  params: {
     id: string;
-  }>;
+  };
 };
-export async function GET(req: Request, context: Context) {
-  const { id } = await context.params
+
+async function GET(req: Request, { params }: Context) {
+  const { id } = params;
   const { data, error } = await supabase
     .from("users")
     .select("*")
@@ -24,8 +25,8 @@ export async function GET(req: Request, context: Context) {
   return NextResponse.json(data)
 }
 
-export async function PATCH(req: Request, context: Context) {
-  const { id } = await context.params;
+export async function PATCH(req: Request, { params }: Context) {
+  const { id } = params;
   const body = await req.json()
 
   const { data, error } = await supabase
@@ -44,8 +45,8 @@ export async function PATCH(req: Request, context: Context) {
   return NextResponse.json(data)
 }
 
-export async function DELETE(_: Request, context: Context) {
-  const { id } = await context.params;
+export async function DELETE(_: Request, { params }: Context) {
+  const { id } = params;
   const { error } = await supabase
     .from("users")
     .update({ is_deleted: true })
