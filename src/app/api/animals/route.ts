@@ -14,8 +14,14 @@ export async function GET() {
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
+    const result = (data ?? []).map((item) => ({
+    ...item,
+    profit: item.status == "sold"
+    ? (item.sell_price ?? 0) - (item.buy_price ?? 0)
+    : 0,
+  }))
 
-  return NextResponse.json(data)
+  return NextResponse.json(result)
 }
 
 export async function POST(req: Request) {
