@@ -1,9 +1,7 @@
 import { NextResponse } from "next/server"
 import { supabase } from "@/lib/supabase"
 
-// ======================
-// GET TRANSACTIONS
-// ======================
+
 export async function GET() {
   const { data, error } = await supabase
     .from("transactions")
@@ -17,12 +15,10 @@ export async function GET() {
     )
   }
 
+
   return NextResponse.json(data ?? [])
 }
 
-// ======================
-// POST TRANSACTION
-// ======================
 export async function POST(req: Request) {
   try {
     const body = await req.json()
