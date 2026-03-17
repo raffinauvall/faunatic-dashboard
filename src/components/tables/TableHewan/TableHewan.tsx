@@ -110,30 +110,30 @@ export default function HewanTable() {
         <div className="min-w-[900px]">
 
           <Table>
-            <TableHeader className="border-b border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-gray-800">
+            <TableHeader className="border-b text-start border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-gray-800">
               <TableRow>
 
-                <TableCell isHeader className="px-5 py-3 text-xs font-semibold uppercase">
+                <TableCell isHeader className="px-5 text-start py-3 text-xs font-semibold uppercase">
                   Animal
                 </TableCell>
 
-                <TableCell isHeader className="px-5 py-3 text-xs font-semibold uppercase">
+                <TableCell isHeader className="px-5 text-start  py-3 text-xs font-semibold uppercase">
                   Buy Price
                 </TableCell>
 
-                <TableCell isHeader className="px-5 py-3 text-xs font-semibold uppercase">
+                <TableCell isHeader className="px-5 text-start  py-3 text-xs font-semibold uppercase">
                   Sell Price
                 </TableCell>
 
-                <TableCell isHeader className="px-5 py-3 text-xs font-semibold uppercase">
+                <TableCell isHeader className="px-5 text-start  py-3 text-xs font-semibold uppercase">
                   Profit
                 </TableCell>
 
-                <TableCell isHeader className="px-5 py-3 text-xs font-semibold uppercase">
+                <TableCell isHeader className="px-5 text-start  py-3 text-xs font-semibold uppercase">
                   Status
                 </TableCell>
 
-                <TableCell isHeader className="px-5 py-3 text-xs font-semibold uppercase">
+                <TableCell isHeader className="px-5 text-start  py-3 text-xs font-semibold uppercase">
                   Owner
                 </TableCell>
 
