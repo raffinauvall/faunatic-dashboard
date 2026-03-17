@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server"
 import { supabase } from "@/lib/supabase"
 
+// ======================
+// GET TRANSACTIONS
+// ======================
 export async function GET() {
   const { data, error } = await supabase
     .from("transactions")
@@ -17,44 +20,60 @@ export async function GET() {
   return NextResponse.json(data ?? [])
 }
 
+// ======================
+// POST TRANSACTION
+// ======================
 export async function POST(req: Request) {
-  const body = await req.json();
-
-  const {
-    type,
-    user_id,
-    amount = 0,
-    animal_id,
-    animal_name,
-  } = body;
-
-  const { data: user, error: userError } = await supabase
-    .from("users")
-    .select("*")
-    .eq("id", user_id)
-    .single();
-
-  if (userError || !user) {
-    return NextResponse.json(
-      { error: "User not found" },
-      { status: 404 }
-    );
-  }
-
-  let newBalance = user.balance ?? 0;
-  let insertedAnimalId: string | null = animal_id ?? null;
-
   try {
+    const body = await req.json()
+
+    const {
+      type,
+      user_id,
+      amount = 0,
+      animal_id,
+      animal_name,
+      transaction_date,
+    } = body
+
+    // ======================
+    // GET USER
+    // ======================
+    const { data: user, error: userError } = await supabase
+      .from("users")
+      .select("*")
+      .eq("id", user_id)
+      .single()
+
+    if (userError || !user) {
+      return NextResponse.json(
+        { error: "User not found" },
+        { status: 404 }
+      )
+    }
+
+    let newBalance = user.balance ?? 0
+    let insertedAnimalId: string | null = animal_id ?? null
+
+    // ======================
+    // DEPOSIT
+    // ======================
     if (type === "deposit") {
-      newBalance += amount;
+      newBalance += amount
     }
 
+    // ======================
+    // TARIK TUNAI
+    // ======================
     if (type === "tarik_tunai") {
-      newBalance -= amount;
+      newBalance -= amount
     }
 
+    // ======================
+    // BELI HEWAN
+    // ======================
     if (type === "beli_hewan") {
-      newBalance -= amount;
+      newBalance -= amount
 
       const { data: newAnimal, error: animalError } =
         await supabase
@@ -66,56 +85,86 @@ export async function POST(req: Request) {
             owner_id: user_id,
           })
           .select()
-          .single();
+          .single()
 
-      if (animalError) throw animalError;
+      if (animalError) throw animalError
 
-      insertedAnimalId = newAnimal.id;
+      insertedAnimalId = newAnimal.id
     }
 
+    // ======================
+    // JUAL HEWAN
+    // ======================
     if (type === "jual_hewan") {
+
       const { data: existingAnimal, error: animalError } =
         await supabase
           .from("animals")
           .select("*")
           .eq("id", animal_id)
-          .single();
+          .single()
 
-      if (animalError || !existingAnimal)
-        throw new Error("Animal not found");
+      if (animalError || !existingAnimal) {
+        throw new Error("Animal not found")
+      }
 
-      const profit = amount - existingAnimal.buy_price;
+      const profit = amount - existingAnimal.buy_price
 
-      await supabase
-        .from("animals")
-        .update({
-          sell_price: amount,
-          profit,
-          status: "sold",
-        })
-        .eq("id", animal_id);
+      const { error: updateAnimalError } =
+        await supabase
+          .from("animals")
+          .update({
+            sell_price: amount,
+            profit,
+            status: "sold",
+          })
+          .eq("id", animal_id)
 
-      newBalance += amount;
-      insertedAnimalId = animal_id;
+      if (updateAnimalError) throw updateAnimalError
+
+      newBalance += amount
+      insertedAnimalId = animal_id
     }
 
-    await supabase
-      .from("users")
-      .update({ balance: newBalance })
-      .eq("id", user_id);
+    // ======================
+    // UPDATE USER BALANCE
+    // ======================
+    const { error: balanceError } =
+      await supabase
+        .from("users")
+        .update({ balance: newBalance })
+        .eq("id", user_id)
 
-    await supabase.from("transactions").insert({
-      user_id,
-      type,
-      amount,
-      animal_id: insertedAnimalId,
-    });
+    if (balanceError) throw balanceError
 
-    return NextResponse.json({ success: true });
+    // ======================
+    // INSERT TRANSACTION
+    // ======================
+    const { error: txError } =
+      await supabase
+        .from("transactions")
+        .insert({
+          user_id,
+          type,
+          amount,
+          animal_id: insertedAnimalId,
+          transaction_date,
+        })
+
+    if (txError) throw txError
+
+    return NextResponse.json({
+      success: true,
+      message: "Transaction created",
+    })
+
   } catch (err: any) {
+
+    console.error("TRANSACTION ERROR:", err)
+
     return NextResponse.json(
       { error: err.message },
       { status: 500 }
-    );
+    )
   }
 }

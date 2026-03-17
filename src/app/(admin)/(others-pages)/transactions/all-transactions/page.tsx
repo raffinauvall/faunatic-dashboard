@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     "This is Next.js Basic Table  page for Faunatic  Tailwind CSS Admin Dashboard Template",
 };
 
-export default function BasicTables() {
+export default function AllTransactionPage() {
   return (
     <div>
       <PageBreadcrumb pageTitle="Semua Transaksi" />

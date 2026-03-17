@@ -2,8 +2,8 @@ import SignInForm from "@/components/auth/SignInForm";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Next.js SignIn Page | Faunatic - Next.js Dashboard Template",
-  description: "This is Next.js Signin Page Faunatic Dashboard Template",
+  title: "Faunatic.id | Sign In",
+  description: "Faunatic dashboard authentication",
 };
 
 export default function SignIn() {

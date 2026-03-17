@@ -1,94 +1,210 @@
 "use client";
 
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import React, { useState } from "react";
+import AddTaskModal from "@/components/modals/AddTaskModals";
+import React, { useEffect, useState } from "react";
+
+import { Calendar, momentLocalizer } from "react-big-calendar";
+import moment from "moment";
+import "react-big-calendar/lib/css/react-big-calendar.css";
+import "@/styles/calendar.css";
+
+const localizer = momentLocalizer(moment);
 
 type Task = {
   id: number;
-  title: string;
-  status: "todo" | "progress" | "done";
+  name: string;
+  date: string;
+  status: "todo" | "done";
 };
 
 export default function Page() {
-  const [tasks, setTasks] = useState<Task[]>([
-    { id: 1, title: "Design Landing Page", status: "todo" },
-    { id: 2, title: "Fix Authentication Bug", status: "progress" },
-    { id: 3, title: "Deploy to VPS", status: "done" },
-  ]);
+  const [openModal, setOpenModal] = useState(false);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [viewMode, setViewMode] = useState<"list" | "calendar">("list");
 
-  const moveTask = (id: number, newStatus: Task["status"]) => {
-    setTasks((prev) =>
-      prev.map((task) =>
-        task.id === id ? { ...task, status: newStatus } : task
-      )
-    );
+  const fetchTasks = async () => {
+    const res = await fetch("/api/tasks");
+    const data = await res.json();
+    setTasks(data);
   };
 
-  const renderColumn = (
-    title: string,
-    status: Task["status"],
-    color: string
-  ) => (
-    <div className="w-full md:w-1/3">
-      <div className="rounded-2xl bg-white dark:bg-gray-900 shadow-sm border border-gray-200 dark:border-gray-800 p-4">
-        <h2 className={`text-lg font-semibold mb-4 ${color}`}>
-          {title}
-        </h2>
+  useEffect(() => {
+    fetchTasks();
+  }, []);
 
-        <div className="space-y-3">
-          {tasks
-            .filter((task) => task.status === status)
-            .map((task) => (
-              <div
-                key={task.id}
-                className="p-4 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:shadow-md transition"
-              >
-                <p className="font-medium text-gray-800 dark:text-white">
-                  {task.title}
-                </p>
+  const toggleDone = async (task: Task) => {
+    const newStatus = task.status === "done" ? "todo" : "done";
 
-                <div className="flex gap-2 mt-3 text-sm">
-                  {status !== "todo" && (
-                    <button
-                      onClick={() => moveTask(task.id, "todo")}
-                      className="px-2 py-1 rounded bg-gray-200 dark:bg-gray-700 hover:opacity-80"
-                    >
-                      Todo
-                    </button>
-                  )}
-                  {status !== "progress" && (
-                    <button
-                      onClick={() => moveTask(task.id, "progress")}
-                      className="px-2 py-1 rounded bg-blue-500 text-white hover:opacity-80"
-                    >
-                      Progress
-                    </button>
-                  )}
-                  {status !== "done" && (
-                    <button
-                      onClick={() => moveTask(task.id, "done")}
-                      className="px-2 py-1 rounded bg-green-500 text-white hover:opacity-80"
-                    >
-                      Done
-                    </button>
-                  )}
-                </div>
-              </div>
-            ))}
-        </div>
-      </div>
-    </div>
-  );
+    setTasks((prev) =>
+      prev.map((t) =>
+        t.id === task.id ? { ...t, status: newStatus } : t
+      )
+    );
+
+    await fetch("/api/tasks", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: task.id,
+        status: newStatus,
+      }),
+    });
+  };
+
+  const groupedTasks = tasks.reduce((acc: any, task) => {
+    if (!acc[task.date]) {
+      acc[task.date] = [];
+    }
+    acc[task.date].push(task);
+    return acc;
+  }, {});
+
+  const sortedDates = Object.keys(groupedTasks).sort();
+
+  const events = tasks.map((task) => ({
+    title: `${task.name} (${task.status})`,
+    start: new Date(task.date),
+    end: new Date(task.date),
+    allDay: true,
+  }));
 
   return (
     <div>
-      <PageBreadcrumb pageTitle="Kanban Board" />
+      <PageBreadcrumb pageTitle="Team Tasks" />
 
-      <div className="flex flex-col md:flex-row gap-6">
-        {renderColumn("Todo", "todo", "text-gray-700 dark:text-gray-300")}
-        {renderColumn("In Progress", "progress", "text-blue-500")}
-        {renderColumn("Done", "done", "text-green-500")}
+      {/* HEADER */}
+      <div className="flex justify-between mb-6">
+
+        {/* VIEW SWITCH */}
+        <div className="flex gap-2 dark:text-white">
+
+          <button
+            onClick={() => setViewMode("list")}
+            className={`px-3 py-2 rounded-lg ${
+              viewMode === "list"
+                ? "bg-gray-800 text-white"
+                : "bg-gray-200 dark:bg-gray-700"
+            }`}
+          >
+            List
+          </button>
+
+          <button
+            onClick={() => setViewMode("calendar")}
+            className={`px-3 py-2 rounded-lg ${
+              viewMode === "calendar"
+                ? "bg-gray-800 text-white"
+                : "bg-gray-200 dark:bg-gray-700"
+            }`}
+          >
+            Calendar
+          </button>
+
+        </div>
+
+        {/* ADD BUTTON */}
+        <button
+          onClick={() => setOpenModal(true)}
+          className="px-4 py-2 bg-gray-800 text-white rounded-lg"
+        >
+          Add Task
+        </button>
+
       </div>
+
+      {/* LIST VIEW */}
+      {viewMode === "list" && (
+        <div className="space-y-6">
+
+          {sortedDates.map((date) => (
+            <div
+              key={date}
+              className="rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-5"
+            >
+
+              {/* DATE */}
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
+                {new Date(date).toLocaleDateString("id-ID", {
+                  weekday: "long",
+                  day: "numeric",
+                  month: "long",
+                })}
+              </h2>
+
+              {/* TASK LIST */}
+              <div className="space-y-3">
+
+                {groupedTasks[date].map((task: Task) => (
+                  <div
+                    key={task.id}
+                    className="flex items-center justify-between p-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
+                  >
+
+                    <div className="flex items-center gap-3">
+
+                      <input
+                        type="checkbox"
+                        checked={task.status === "done"}
+                        onChange={() => toggleDone(task)}
+                        className="w-4 h-4"
+                      />
+
+                      <p
+                        className={`text-gray-800 dark:text-white ${
+                          task.status === "done"
+                            ? "line-through opacity-60"
+                            : ""
+                        }`}
+                      >
+                        {task.name}
+                      </p>
+
+                    </div>
+
+                    <span
+                      className={`text-xs px-2 py-1 rounded-lg ${
+                        task.status === "done"
+                          ? "bg-green-100 text-green-700"
+                          : "bg-yellow-100 text-yellow-700"
+                      }`}
+                    >
+                      {task.status}
+                    </span>
+
+                  </div>
+                ))}
+
+              </div>
+
+            </div>
+          ))}
+
+        </div>
+      )}
+
+      {/* CALENDAR VIEW */}
+      {viewMode === "calendar" && (
+        <div className="bg-white dark:bg-gray-900 dark:text-white p-5 rounded-2xl border border-gray-200 dark:border-gray-800">
+
+          <Calendar
+            localizer={localizer}
+            events={events}
+            startAccessor="start"
+            endAccessor="end"
+            style={{ height: 600 }}
+          />
+
+        </div>
+      )}
+
+      <AddTaskModal
+        isOpen={openModal}
+        onClose={() => setOpenModal(false)}
+        onSuccess={fetchTasks}
+      />
     </div>
   );
 }

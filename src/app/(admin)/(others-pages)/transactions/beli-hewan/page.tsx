@@ -12,12 +12,12 @@ export const metadata: Metadata = {
   // other metadata
 };
 
-export default function BasicTables() {
+export default function BeliHewanTransaction() {
   return (
     <div>
-      <PageBreadcrumb pageTitle="Stock Hewan" />
+      <PageBreadcrumb pageTitle="Transaksi" />
       <div className="space-y-6">
-        <ComponentCard title="Basic Table 1">
+        <ComponentCard title="Transaksi Beli Hewan">
           <BeliHewanTable />
         </ComponentCard>
       </div>

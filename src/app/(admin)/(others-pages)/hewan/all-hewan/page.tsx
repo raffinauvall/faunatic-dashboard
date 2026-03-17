@@ -1,23 +1,22 @@
 import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import BasicTableOne from "@/components/tables/BasicTableOne";
-import JualHewanTable from "@/components/tables/JualHewan";
+import HewanTable from "@/components/tables/TableHewan/TableHewan";
 import { Metadata } from "next";
 import React from "react";
 
 export const metadata: Metadata = {
-  title: "Faunatic.id | Transaksi Jual Hewan",
+  title: "Faunatic.id | Stok Hewan",
   description:
     "This is Next.js Basic Table  page for Faunatic  Tailwind CSS Admin Dashboard Template",
 };
 
-export default function JualHewanTransaction() {
+export default function AllTransactionPage() {
   return (
     <div>
-      <PageBreadcrumb pageTitle="Transaksi" />
+      <PageBreadcrumb pageTitle="Semua Hewan" />
       <div className="space-y-6">
-        <ComponentCard title="Transaksi Jual Hewan">
-          <JualHewanTable />
+        <ComponentCard title="Hewan">
+          <HewanTable/>
         </ComponentCard>
       </div>
     </div>

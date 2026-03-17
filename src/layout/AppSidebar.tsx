@@ -13,6 +13,7 @@ import {
   GridIcon,
   HorizontaLDots,
 } from "../icons/index";
+import { Calendar, User } from "lucide-react";
 
 type NavItem = {
   name: string;
@@ -35,7 +36,7 @@ const navItems: NavItem[] = [
   {
     name: "Stock",
     icon: <GridIcon />,
-    subItems: [{ name: "Hewan", path: "/basic-tables" }],
+    subItems: [{ name: "Hewan", path: "/hewan/all-hewan" }],
   },
   {
     name: "Transaction",
@@ -51,16 +52,15 @@ const navItems: NavItem[] = [
   {
     name: "Task",
     icon: <GridIcon />,
-    subItems: [
-      { name: "Task List", path: "/task" },
-      { name: "Task Form", path: "/task/task-form" },
-    ],
+    path: "/task"
   },
+
   {
-    name: "Calendar",
-    icon: <GridIcon />,
-    subItems: [{ name: "Calendar View", path: "/calendar" }],
-  },
+    name: "User", 
+    icon: <User />,
+    path: "/user"
+
+  }
 ];
 
 const AppSidebar: React.FC = () => {
@@ -77,9 +77,6 @@ const AppSidebar: React.FC = () => {
     [pathname]
   );
 
-  /* =========================
-     AUTO OPEN SUBMENU IF ACTIVE
-  ========================== */
   useEffect(() => {
     let matched = false;
 

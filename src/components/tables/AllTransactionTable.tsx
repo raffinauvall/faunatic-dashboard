@@ -16,6 +16,7 @@ interface Transaction {
   id: string;
   type: string;
   amount: number;
+  transaction_date: string;
   created_at: string;
   users?: {
     name: string;
@@ -54,80 +55,84 @@ export default function AllTransactionsTable() {
       <div className="max-w-full overflow-x-auto">
         <div className="min-w-[900px]">
           <Table>
-           <TableHeader className="border-b border-gray-200 dark:border-white/[0.05] bg-gray-50 dark:bg-white/[0.02]">
-  <TableRow>
-    <TableCell
-      isHeader
-      className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
-    >
-      User
-    </TableCell>
+            <TableHeader className="border-b border-gray-200 dark:border-white/[0.05] bg-gray-50 dark:bg-white/[0.02]">
+              <TableRow>
+                <TableCell
+                  isHeader
+                  className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                >
+                  User
+                </TableCell>
 
-    <TableCell isHeader className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-      Type
-    </TableCell>
+                <TableCell isHeader className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  Type
+                </TableCell>
 
-    <TableCell isHeader className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-      Amount
-    </TableCell>
+                <TableCell isHeader className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  Amount
+                </TableCell>
 
-    <TableCell isHeader className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-      Date
-    </TableCell>
+                <TableCell isHeader className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  Date
+                </TableCell>
 
-    <TableCell isHeader className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-      Status
-    </TableCell>
-  </TableRow>
-</TableHeader>
+                <TableCell isHeader className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  Status
+                </TableCell>
+              </TableRow>
+            </TableHeader>
 
             <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-  {transactions.map((tx) => (
-    <TableRow key={tx.id} className="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition">
-      
-      {/* USER */}
-      <TableCell className="py-3 px-4 text-gray-800 dark:text-white">
-        {tx.users?.name || "Unknown"}
-      </TableCell>
+              {transactions.map((tx) => (
+                <TableRow key={tx.id} className="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition">
 
-      {/* TYPE */}
-      <TableCell className="py-3 px-4 capitalize">
-        <Badge
-          size="sm"
-          color={
-            tx.type === "deposit"
-              ? "success"
-              : tx.type === "jual_hewan"
-              ? "info"
-              : tx.type === "beli_hewan"
-              ? "warning"
-              : "error"
-          }
-        >
-          {tx.type}
-        </Badge>
-      </TableCell>
+                  {/* USER */}
+                  <TableCell className="py-3 px-4 text-gray-800 dark:text-white">
+                    {tx.users?.name || "Unknown"}
+                  </TableCell>
 
-      {/* AMOUNT */}
-      <TableCell className="py-3 px-4 text-gray-800 dark:text-white">
-        Rp {tx.amount?.toLocaleString()}
-      </TableCell>
+                  {/* TYPE */}
+                  <TableCell className="py-3 px-4 capitalize">
+                    <Badge
+                      size="sm"
+                      color={
+                        tx.type === "deposit"
+                          ? "success"
+                          : tx.type === "jual_hewan"
+                            ? "info"
+                            : tx.type === "beli_hewan"
+                              ? "warning"
+                              : "error"
+                      }
+                    >
+                      {tx.type}
+                    </Badge>
+                  </TableCell>
 
-      {/* DATE */}
-      <TableCell className="py-3 px-4 text-sm text-gray-500 dark:text-gray-400">
-        {new Date(tx.created_at).toLocaleString()}
-      </TableCell>
+                  {/* AMOUNT */}
+                  <TableCell className="py-3 px-4 text-gray-800 dark:text-white">
+                    Rp {tx.amount?.toLocaleString()}
+                  </TableCell>
 
-      {/* STATUS */}
-      <TableCell className="py-3 px-4">
-        <Badge size="sm" color="success">
-          Success
-        </Badge>
-      </TableCell>
+                  {/* DATE */}
+                  <TableCell className="py-3 px-4 text-sm text-gray-500 dark:text-gray-400">
+                    {new Date(tx.transaction_date).toLocaleDateString("id-ID", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </TableCell>
 
-    </TableRow>
-  ))}
-</TableBody>
+                  {/* STATUS */}
+                  <TableCell className="py-3 px-4">
+                    <Badge size="sm" color="success">
+                      Success
+                    </Badge>
+                  </TableCell>
+
+                </TableRow>
+              ))}
+            </TableBody>
           </Table>
         </div>
       </div>

@@ -14,9 +14,9 @@ import { Metadata } from "next";
 import React from "react";
 
 export const metadata: Metadata = {
-  title: "Next.js Form Elements | Faunatic - Next.js Dashboard Template",
+  title: "Faunatic | Add Transaction",
   description:
-    "This is Next.js Form Elements page for Faunatic - Next.js Tailwind CSS Admin Dashboard Template",
+    "Faunatic Add Transaction Form",
 };
 
 export default function TransactionForm() {

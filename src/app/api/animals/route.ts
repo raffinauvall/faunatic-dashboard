@@ -4,7 +4,10 @@ import { supabase } from "@/lib/supabase"
 export async function GET() {
   const { data, error } = await supabase
     .from("animals")
-    .select("*")
+    .select(`
+      *,
+      users:owner_id (*)
+    `)
     .eq("is_deleted", false)
     .order("created_at", { ascending: false })
 
