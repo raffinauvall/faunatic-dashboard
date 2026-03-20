@@ -11,20 +11,8 @@ import {
 
 import Badge from "../ui/badge/Badge";
 import Image from "next/image";
+import { Transaction } from "@/lib/types/entity/transaction";
 
-interface Transaction {
-  id: string;
-  type: string;
-  amount: number;
-  created_at: string;
-  transaction_date: string;
-  users?: {
-    name: string;
-  };
-  animals?: {
-    name: string;
-  } | null;
-}
 
 export default function BeliHewanTable() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);

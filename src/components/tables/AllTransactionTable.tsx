@@ -13,20 +13,8 @@ import Badge from "../ui/badge/Badge";
 import Image from "next/image";
 import { Pencil, Trash2 } from "lucide-react";
 import EditTransactionModal from "../modals/transaction/EditTransactionModal";
+import { Transaction } from "@/lib/types/entity/transaction";
 
-interface Transaction {
-  id: string;
-  type: string;
-  amount: number;
-  transaction_date: string;
-  created_at: string;
-  users?: {
-    name: string;
-  };
-  animals?: {
-    name: string;
-  } | null;
-}
 
 export default function AllTransactionsTable() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);

@@ -1,17 +1,8 @@
 "use client";
 
+import { Transaction } from "@/lib/types/entity/transaction";
 import React, { useEffect, useState } from "react";
 
-interface Transaction {
-  id: string;
-  type: string;
-  amount: number;
-  transaction_date: string;
-  users?: {
-    id: string;
-    name: string;
-  };
-}
 
 interface Props {
   isOpen: boolean;
@@ -35,7 +26,6 @@ export default function EditTransactionModal({
 
   const [users, setUsers] = useState<{ id: string; name: string }[]>([]);
 
-  // ✅ fetch users (sekali aja biar ga boros)
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -50,7 +40,6 @@ export default function EditTransactionModal({
     fetchUsers();
   }, []);
 
-  // ✅ set form saat edit
   useEffect(() => {
     if (transaction) {
       setForm({

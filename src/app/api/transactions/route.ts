@@ -89,7 +89,7 @@ export async function POST(req: Request) {
         .from("transactions")
         .insert({
           user_id,
-          type,
+          type, 
           amount,
           animal_id: insertedAnimalId,
           transaction_date,

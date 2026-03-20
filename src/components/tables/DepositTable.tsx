@@ -11,20 +11,7 @@ import {
 
 import Badge from "../ui/badge/Badge";
 import Image from "next/image";
-
-interface Transaction {
-  id: string;
-  type: string;
-  amount: number;
-  transaction_date: string;
-  created_at: string;
-  users?: {
-    name: string;
-  };
-  animals?: {
-    name: string;
-  } | null;
-}
+import { Transaction } from "@/lib/types/entity/transaction";
 
 export default function DepositTable() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
