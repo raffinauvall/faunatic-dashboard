@@ -15,7 +15,6 @@ export default function AddUserModal({
 }: AddUserModalProps) {
 
   const [name, setName] = useState("");
-  const [balance, setBalance] = useState("");
 
   const handleSubmit = async () => {
     if (!name) return;
@@ -27,12 +26,10 @@ export default function AddUserModal({
       },
       body: JSON.stringify({
         name,
-        balance: balance ? Number(balance) : undefined,
       }),
     });
 
     setName("");
-    setBalance("");
 
     await onSuccess();
     onClose();
@@ -60,14 +57,6 @@ export default function AddUserModal({
             className="w-full p-2 border rounded-lg dark:bg-gray-800 dark:border-gray-700 dark:text-white"
           />
 
-          {/* BALANCE */}
-          <input
-            type="number"
-            placeholder="Balance (optional)"
-            value={balance}
-            onChange={(e) => setBalance(e.target.value)}
-            className="w-full p-2 border rounded-lg dark:bg-gray-800 dark:border-gray-700 dark:text-white"
-          />
 
         </div>
 

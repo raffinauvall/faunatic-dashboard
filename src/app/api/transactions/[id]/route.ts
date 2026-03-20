@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { supabase } from "@/lib/supabase"
+import syncBuyPrice  from "@/lib/syncBuyPrice"
 
 type Context = {
   params: Promise<{
@@ -24,19 +25,24 @@ export async function GET(_: Request, context: Context) {
 
 export async function PATCH(req: Request, context: Context) {
   const { id } = await context.params;
-  const body = await req.json()
+  const body = await req.json();
 
   const { data, error } = await supabase
     .from("transactions")
     .update(body)
     .eq("id", id)
     .select()
+    .single();
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 400 })
+    return NextResponse.json({ error: error.message }, { status: 400 });
   }
 
-  return NextResponse.json(data)
+  if (data.type === "beli_hewan" && data.animal_id) {
+    await syncBuyPrice(data.animal_id);
+  }
+
+  return NextResponse.json(data);
 }
 
 export async function DELETE(_: Request, context: Context) {

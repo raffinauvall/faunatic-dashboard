@@ -11,6 +11,8 @@ import {
 
 import Badge from "../ui/badge/Badge";
 import Image from "next/image";
+import { Pencil, Trash2 } from "lucide-react";
+import EditTransactionModal from "../modals/transaction/EditTransactionModal";
 
 interface Transaction {
   id: string;
@@ -29,6 +31,78 @@ interface Transaction {
 export default function AllTransactionsTable() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);
+  const [form, setForm] = useState({
+    owner: "",
+    type: "",
+    amount: 0,
+    transaction_date: ""
+  })
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Yakin mau hapus transaksi ini?")) return;
+
+    try {
+      await fetch(`/api/transactions/${id}`, {
+        method: "DELETE",
+      });
+      setTransactions((prev) => prev.filter((tx) => tx.id !== id));
+    } catch (err) {
+      console.error(err)
+    }
+  };
+
+  const handleEdit = (tx: Transaction) => {
+    setSelectedTx(tx);
+    setIsEditOpen(true);
+  };
+  const handleUpdate = async (form: any) => {
+  if (!selectedTx) return;
+
+  try {
+    const res = await fetch(`/api/transactions/${selectedTx.id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(form),
+    });
+
+    // 🔥 HANDLE ERROR DULU
+    if (!res.ok) {
+      const text = await res.text();
+      console.error("API Error:", text);
+      return;
+    }
+
+    let updated = null;
+
+    try {
+      updated = await res.json();
+    } catch (err) {
+      console.error("Response bukan JSON");
+      return;
+    }
+
+    setTransactions((prev) =>
+      prev.map((tx) => (tx.id === selectedTx.id ? updated : tx))
+    );
+
+    setIsEditOpen(false);
+    setSelectedTx(null);
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
+  };
+
 
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -78,6 +152,9 @@ export default function AllTransactionsTable() {
 
                 <TableCell isHeader className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Status
+                </TableCell>
+                <TableCell isHeader className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  Action
                 </TableCell>
               </TableRow>
             </TableHeader>
@@ -129,11 +206,32 @@ export default function AllTransactionsTable() {
                       Success
                     </Badge>
                   </TableCell>
+                  <TableCell className="py-3 px-4 flex gap-2">
+                    <button
+                     onClick={() => handleEdit(tx)}
+                     
+                      className="p-2 text-blue-500 hover:bg-blue-50 rounded"
+                    >
+                      <Pencil size={16} />
+                    </button>
 
+                    <button
+                      onClick={() => handleDelete(tx.id)}
+                      className="p-2 text-red-500 hover:bg-red-50 rounded"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
+          <EditTransactionModal
+            isOpen={isEditOpen}
+            onClose={() => setIsEditOpen(false)}
+            onSave={handleUpdate}
+            transaction={selectedTx}
+          />
         </div>
       </div>
     </div>
