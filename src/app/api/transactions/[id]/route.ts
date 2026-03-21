@@ -27,9 +27,27 @@ export async function PATCH(req: Request, context: Context) {
   const { id } = await context.params;
   const body = await req.json();
 
+  const { data: existing } = await supabase
+    .from("transactions")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  let updateData = { ...body };
+
+  if (existing?.type === "jual_hewan") {
+    if (!body.animal_id && !existing.animal_id) {
+      updateData.status_order = "sourcing";
+    }
+
+    if (body.animal_id) {
+      updateData.status_order = "completed";
+    }
+  }
+
   const { data, error } = await supabase
     .from("transactions")
-    .update(body)
+    .update(updateData)
     .eq("id", id)
     .select()
     .single();

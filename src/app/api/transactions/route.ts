@@ -17,6 +17,7 @@ export async function GET() {
   return NextResponse.json(data ?? []);
 }
 
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -27,13 +28,54 @@ export async function POST(req: Request) {
       amount = 0,
       animal_id,
       animal_name,
+      animal_request,
+      customer_id,
+      customer_name,
+      customer_phone,
       transaction_date,
     } = body;
 
     let insertedAnimalId: string | null = animal_id ?? null;
+    let status_order = "completed";
+    let finalCustomerId: string | null = customer_id ?? null;
 
     // ======================
-    // BELI HEWAN
+    // 🔥 HANDLE CUSTOMER
+    // ======================
+    if (type === "jual_hewan") {
+      if (!finalCustomerId && customer_name) {
+        const { data: existing } = await supabase
+          .from("customers")
+          .select("*")
+          .eq("phone", customer_phone)
+          .maybeSingle();
+
+        if (existing) {
+          finalCustomerId = existing.id;
+        } else {
+          const { data: newCustomer, error } = await supabase
+            .from("customers")
+            .insert({
+              name: customer_name,
+              phone: customer_phone,
+            })
+            .select()
+            .single();
+
+          if (error) throw error;
+
+          finalCustomerId = newCustomer.id;
+        }
+      }
+
+      // ❗ VALIDASI
+      if (!finalCustomerId) {
+        throw new Error("Customer wajib diisi");
+      }
+    }
+
+    // ======================
+    // 🟢 BELI HEWAN
     // ======================
     if (type === "beli_hewan") {
       const { data: newAnimal, error: animalError } =
@@ -51,48 +93,62 @@ export async function POST(req: Request) {
       if (animalError) throw animalError;
 
       insertedAnimalId = newAnimal.id;
+      status_order = "completed";
     }
 
     // ======================
-    // JUAL HEWAN
+    // 🔴 JUAL HEWAN
     // ======================
     if (type === "jual_hewan") {
-      const { data: existingAnimal, error: animalError } =
-        await supabase
-          .from("animals")
-          .select("*")
-          .eq("id", animal_id)
-          .single();
-
-      if (animalError || !existingAnimal) {
-        throw new Error("Animal not found");
+      // ❌ kalau belum ada animal → sourcing
+      if (!animal_id) {
+        status_order = "sourcing";
       }
 
-      const profit = amount - existingAnimal.buy_price;
+      // ✅ kalau ada animal → langsung sold
+      if (animal_id) {
+        const { data: existingAnimal, error: animalError } =
+          await supabase
+            .from("animals")
+            .select("*")
+            .eq("id", animal_id)
+            .single();
 
-      const { error: updateAnimalError } =
-        await supabase
-          .from("animals")
-          .update({
-            sell_price: amount,
-            status: "sold",
-          })
-          .eq("id", animal_id);
+        if (animalError || !existingAnimal) {
+          throw new Error("Animal not found");
+        }
 
-      if (updateAnimalError) throw updateAnimalError;
+        const { error: updateAnimalError } =
+          await supabase
+            .from("animals")
+            .update({
+              sell_price: amount,
+              status: "sold",
+            })
+            .eq("id", animal_id);
 
-      insertedAnimalId = animal_id;
+        if (updateAnimalError) throw updateAnimalError;
+
+        insertedAnimalId = animal_id;
+        status_order = "completed";
+      }
     }
 
+    // ======================
+    // 💾 INSERT TRANSACTION
+    // ======================
     const { error: txError } =
       await supabase
         .from("transactions")
         .insert({
           user_id,
-          type, 
+          type,
           amount,
           animal_id: insertedAnimalId,
           transaction_date,
+          status_order,
+          animal_request: animal_request ?? animal_name ?? null,
+          customer_id: finalCustomerId,
         });
 
     if (txError) throw txError;
