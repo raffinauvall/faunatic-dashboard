@@ -21,6 +21,10 @@ export default function AllTransactionsTable() {
   const [loading, setLoading] = useState(true);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);
+  const [ownerFilter, setOwnerFilter] = useState("");
+  const [typeFilter, setTypeFilter] = useState("");
+
+
   const [form, setForm] = useState({
     owner: "",
     type: "",
@@ -46,43 +50,43 @@ export default function AllTransactionsTable() {
     setIsEditOpen(true);
   };
   const handleUpdate = async (form: any) => {
-  if (!selectedTx) return;
-
-  try {
-    const res = await fetch(`/api/transactions/${selectedTx.id}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(form),
-    });
-
-    // 🔥 HANDLE ERROR DULU
-    if (!res.ok) {
-      const text = await res.text();
-      console.error("API Error:", text);
-      return;
-    }
-
-    let updated = null;
+    if (!selectedTx) return;
 
     try {
-      updated = await res.json();
+      const res = await fetch(`/api/transactions/${selectedTx.id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
+
+      // 🔥 HANDLE ERROR DULU
+      if (!res.ok) {
+        const text = await res.text();
+        console.error("API Error:", text);
+        return;
+      }
+
+      let updated = null;
+
+      try {
+        updated = await res.json();
+      } catch (err) {
+        console.error("Response bukan JSON");
+        return;
+      }
+
+      setTransactions((prev) =>
+        prev.map((tx) => (tx.id === selectedTx.id ? updated : tx))
+      );
+
+      setIsEditOpen(false);
+      setSelectedTx(null);
     } catch (err) {
-      console.error("Response bukan JSON");
-      return;
+      console.error(err);
     }
-
-    setTransactions((prev) =>
-      prev.map((tx) => (tx.id === selectedTx.id ? updated : tx))
-    );
-
-    setIsEditOpen(false);
-    setSelectedTx(null);
-  } catch (err) {
-    console.error(err);
-  }
-};
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setForm({
@@ -112,10 +116,61 @@ export default function AllTransactionsTable() {
     return <div className="p-4">Loading transactions...</div>;
   }
 
+  const owners = Array.from(
+    new Set(transactions.map((tx) => tx.users?.name).filter(Boolean))
+  )
+
+  const types = Array.from(
+    new Set(transactions.map((tx) => tx.type).filter(Boolean))
+  ).sort();
+
+
+  const filteredTransactions = transactions.filter((tx) => {
+    const matchOwner = ownerFilter
+      ? tx.users?.name === ownerFilter
+      : true;
+
+    const matchType = typeFilter
+      ? tx.type === typeFilter
+      : true;
+
+    return matchOwner && matchType;
+  });
+
+
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
       <div className="max-w-full overflow-x-auto">
         <div className="min-w-[900px]">
+          <div className="p-4 flex gap-3 dark:text-white">
+            {/* OWNER */}
+            <select
+              value={ownerFilter}
+              onChange={(e) => setOwnerFilter(e.target.value)}
+              className="border px-3 py-2 rounded dark:bg-gray-800"
+            >
+              <option value="">All Owner</option>
+              {owners.map((owner) => (
+                <option key={owner} value={owner}>
+                  {owner}
+                </option>
+              ))}
+            </select>
+
+            {/* TYPE */}
+            <select
+              value={typeFilter}
+              onChange={(e) => setTypeFilter(e.target.value)}
+              className="border px-3 py-2 rounded dark:bg-gray-800"
+            >
+              <option value="">All Type</option>
+              {types.map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
+          </div>
           <Table>
             <TableHeader className="border-b border-gray-200 dark:border-white/[0.05] bg-gray-50 dark:bg-white/[0.02]">
               <TableRow>
@@ -148,7 +203,7 @@ export default function AllTransactionsTable() {
             </TableHeader>
 
             <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-              {transactions.map((tx) => (
+              {filteredTransactions.map((tx) => (
                 <TableRow key={tx.id} className="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition">
 
                   {/* USER */}
@@ -190,14 +245,23 @@ export default function AllTransactionsTable() {
 
                   {/* STATUS */}
                   <TableCell className="py-3 px-4">
-                    <Badge size="sm" color="success">
-                      Success
+                    <Badge
+                      size="sm"
+                      color={
+                        tx.status_order === "sourcing"
+                          ? "warning"
+                          : tx.status_order === "completed"
+                            ? "success"
+                            : "error"
+                      }
+                    >
+                      {tx.status_order}
                     </Badge>
                   </TableCell>
                   <TableCell className="py-3 px-4 flex gap-2">
                     <button
-                     onClick={() => handleEdit(tx)}
-                     
+                      onClick={() => handleEdit(tx)}
+
                       className="p-2 text-blue-500 hover:bg-blue-50 rounded"
                     >
                       <Pencil size={16} />
