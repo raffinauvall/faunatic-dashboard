@@ -117,8 +117,17 @@ export default function DepositTable() {
 
                   {/* STATUS */}
                   <TableCell className="py-3 px-4">
-                    <Badge size="sm" color="success">
-                      Success
+                    <Badge
+                      size="sm"
+                      color={
+                        tx.status_order === "completed"
+                          ? "success"
+                          : tx.status_order === "sourcing"
+                          ? "warning"
+                          : "error"
+                      }
+                    >
+                      {tx.status_order}
                     </Badge>
                   </TableCell>
 

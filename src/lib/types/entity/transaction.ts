@@ -4,6 +4,8 @@ export interface Transaction {
   amount: number;
   transaction_date: string;
   status_order?: string;
+  payment_status?: string;
+  animal_request?: string;
   buy_date?: string;
   sell_date?: string;
   created_at?: string;
