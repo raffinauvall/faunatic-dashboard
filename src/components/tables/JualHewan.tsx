@@ -107,7 +107,7 @@ export default function JualHewanTable() {
                   </TableCell>
 
                   <TableCell className="py-3 px-4 text-gray-800 dark:text-white">
-                    {tx.animals?.name}
+                    {tx.animals?.name || tx.animal_request || "-"}
                   </TableCell>
 
                   {/* AMOUNT */}
@@ -126,8 +126,17 @@ export default function JualHewanTable() {
 
                   {/* STATUS */}
                   <TableCell className="py-3 px-4">
-                    <Badge size="sm" color="success">
-                      Success
+                    <Badge
+                      size="sm"
+                      color={
+                        tx.status_order === "completed"
+                          ? "success"
+                          : tx.status_order === "sourcing"
+                          ? "warning"
+                          : "error"
+                      }
+                    >
+                      {tx.status_order}
                     </Badge>
                   </TableCell>
 
