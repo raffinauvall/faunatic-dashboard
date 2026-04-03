@@ -36,7 +36,10 @@ const navItems: NavItem[] = [
   {
     name: "Stock",
     icon: <GridIcon />,
-    subItems: [{ name: "Hewan", path: "/hewan/all-hewan" }],
+    subItems: [
+      { name: "Hewan", path: "/hewan/all-hewan" },
+      {name: "Sourcing", path: "/hewan/sourcing"}
+    ],
   },
   {
     name: "Transaction",

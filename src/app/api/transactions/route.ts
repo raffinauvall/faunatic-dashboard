@@ -74,9 +74,6 @@ export async function POST(req: Request) {
       }
     }
 
-    // ======================
-    // 🟢 BELI HEWAN
-    // ======================
     if (type === "beli_hewan") {
       const { data: newAnimal, error: animalError } =
         await supabase
