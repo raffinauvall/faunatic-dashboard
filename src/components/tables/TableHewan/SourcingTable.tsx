@@ -10,7 +10,7 @@ import {
 } from "../../ui/table";
 
 import Badge from "../../ui/badge/Badge";
-import { Pencil } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 import EditSourcingModal from "@/components/modals/EditSourcingModal";
 
 interface Transaction {
@@ -29,19 +29,19 @@ export default function SourcingTable() {
   const [selected, setSelected] = useState<Transaction | null>(null);
   const [openModal, setOpenModal] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await fetch("/api/transactions");
-        const json = await res.json();
-        setData(json);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchData = async () => {
+    try {
+      const res = await fetch("/api/transactions");
+      const json = await res.json();
+      setData(json);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchData();
   }, []);
 
@@ -67,7 +67,27 @@ export default function SourcingTable() {
   const handleEdit = (item: Transaction) => {
     setSelected(item);
     setOpenModal(true);
-  }
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!confirm("Are you sure you want to delete this sourcing request?")) {
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/transactions/${id}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        fetchData();
+      } else {
+        alert("Failed to delete");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error deleting transaction");
+    }
+  };
 
   return (
     <div>
@@ -117,12 +137,20 @@ export default function SourcingTable() {
                       {item.users?.name || "Unknown"}
                     </TableCell>
                     <TableCell className="ps-4 pt-3 pb-3">
-                      <button
-                        onClick={() => handleEdit(item)}
-                        className="text-blue-700 rounded"
-                      >
-                        <Pencil size={16}/>
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handleEdit(item)}
+                          className="text-gray-500 hover:text-brand-500 rounded"
+                        >
+                          <Pencil size={16} />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(item.id)}
+                          className="text-gray-500 hover:text-error-500 rounded"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
