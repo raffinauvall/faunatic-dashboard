@@ -1,21 +1,41 @@
-# Faunatic Next.js - Free Next.js Tailwind Admin Dashboard Template
+# Faunatic Next.js - Animal & Livestock Management Dashboard
 
-Faunatic is a free and open-source admin dashboard template built on **Next.js and Tailwind CSS** providing developers with everything they need to create a feature-rich and data-driven: back-end, dashboard, or admin panel solution for any sort of web project.
+Faunatic is a comprehensive admin dashboard template built on **Next.js and Tailwind CSS**, specifically designed for **animal and livestock management, transactions, and customer tracking**. It provides a feature-rich solution for managing animal inventory, financial transactions, and customer relationships.
 
 ![Faunatic - Next.js Dashboard Preview](./banner.png)
 
-With Faunatic Next.js, you get access to all the necessary dashboard UI components, elements, and pages required to build a high-quality and complete dashboard or admin panel. Whether you're building a dashboard or admin panel for a complex web application or a simple website.
+Faunatic utilizes the power of **Next.js 16** (App Router), **React 19**, **Tailwind CSS v4**, and **Supabase** to deliver a robust and scalable application.
 
-Faunatic utilizes the powerful features of **Next.js 16** and common features of Next.js such as server-side rendering (SSR), static site generation (SSG), and seamless API route integration. Combined with the advancements of **React 19** and the robustness of **TypeScript**, Faunatic is the perfect solution to help get your project up and running quickly.
+## Core Features
+
+### 🐾 Animal Inventory Management
+- **Inventory Tracking**: Manage animals with statuses like `ready` (available) and `sold`.
+- **Profit Analysis**: Automatically track profit for each animal based on buy and sell prices.
+- **Sourcing System**: Handle "Sourcing" states for animals sold before they are in inventory.
+
+### 💰 Transaction System
+The project implements a complete financial transaction workflow:
+1. **Deposit**: Increase user balance.
+2. **Tarik Tunai (Withdrawal)**: Decrease user balance.
+3. **Beli Hewan (Buy Animal)**: Purchase animals for inventory (automatically creates animal records).
+4. **Jual_hewan (Sell Animal)**: Sell animals from inventory or record a sourcing request.
+
+### 👥 Customer & User Management
+- Track customer transactions and balances.
+- Manage user profiles and roles.
+
+## Tech Stack
+
+- **Framework**: [Next.js 16.x](https://nextjs.org/) (App Router)
+- **Library**: [React 19](https://react.dev/)
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
+- **Backend-as-a-Service**: [Supabase](https://supabase.com/)
+- **Data Visualization**: [ApexCharts](https://apexcharts.com/)
+- **Icons**: [Lucide React](https://lucide.dev/)
 
 ## Overview
 
-Faunatic provides essential UI components and layouts for building feature-rich, data-driven admin dashboards and control panels. It's built on:
-
-* Next.js 16.x
-* React 19
-* TypeScript
-* Tailwind CSS V4
+Faunatic provides essential UI components and layouts for building feature-rich, data-driven admin dashboards.
 
 ### Quick Links
 
@@ -25,168 +45,50 @@ Faunatic provides essential UI components and layouts for building feature-rich,
 * [🖌️ Figma Design File (Community Edition)](https://www.figma.com/community/file/1463141366275764364)
 * [⚡ Get PRO Version](https://Faunatic.com/pricing)
 
-### Demos
-
-* [Free Version](https://nextjs-free-demo.Faunatic.com)
-* [Pro Version](https://nextjs-demo.Faunatic.com)
-
-### Other Versions
-
-- [Next.js Version](https://github.com/Faunatic/free-nextjs-admin-dashboard)
-- [React.js Version](https://github.com/Faunatic/free-react-tailwind-admin-dashboard)
-- [Vue.js Version](https://github.com/Faunatic/vue-tailwind-admin-dashboard)
-- [Angular Version](https://github.com/Faunatic/free-angular-tailwind-dashboard)
-- [Laravel Version](https://github.com/Faunatic/Faunatic-laravel)
-
 ## Installation
 
 ### Prerequisites
 
-To get started with Faunatic, ensure you have the following prerequisites installed and set up:
+To get started with Faunatic, ensure you have the following prerequisites installed:
 
 * Node.js 18.x or later (recommended to use Node.js 20.x or later)
 
-### Cloning the Repository
+### Setup
 
-Clone the repository using the following command:
-
-```bash
-git clone https://github.com/Faunatic/free-nextjs-admin-dashboard.git
-```
-
-> Windows Users: place the repository near the root of your drive if you face issues while cloning.
-
-1. Install dependencies:
-
+1. Clone the repository:
    ```bash
-   npm install
-   # or
-   yarn install
+   git clone https://github.com/Faunatic/free-nextjs-admin-dashboard.git
    ```
 
-   > Use `--legacy-peer-deps` flag if you face peer-dependency error during installation.
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-2. Start the development server:
+3. Configure Environment Variables:
+   Create a `.env` file in the root directory and add your Supabase credentials and admin settings:
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+   SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+   ADMIN_USERNAME=admin
+   ADMIN_PASSWORD=your_password
+   ```
 
+4. Start the development server:
    ```bash
    npm run dev
-   # or
-   yarn dev
    ```
 
 ## Components
 
-Faunatic is a pre-designed starting point for building a web-based dashboard using Next.js and Tailwind CSS. The template includes:
-
+The template includes:
 * Sophisticated and accessible sidebar
-* Data visualization components
+* Data visualization components (Line and Bar charts)
+* Animal management and transaction forms
 * Profile management and custom 404 page
-* Tables and Charts(Line and Bar)
-* Authentication forms and input elements
-* Alerts, Dropdowns, Modals, Buttons and more
-* Can't forget Dark Mode 🕶️
-
-All components are built with React and styled using Tailwind CSS for easy customization.
-
-## Feature Comparison
-
-### Free Version
-
-* 1 Unique Dashboard
-* 30+ dashboard components
-* 50+ UI elements
-* Basic Figma design files
-* Community support
-
-### Pro Version
-
-* 7 Unique Dashboards: Analytics, Ecommerce, Marketing, CRM, SaaS, Stocks, Logistics (more coming soon)
-* 500+ dashboard components and UI elements
-* Complete Figma design file
-* Email support
-
-To learn more about pro version features and pricing, visit our [pricing page](https://Faunatic.com/pricing).
-
-## Changelog
-
-### Version 2.2.2 - [December 30, 2025]
-
-* Fixed date picker positioning and functionality in Statistics Chart.
-
-
-### Version 2.1.0 - [November 15, 2025]
-
-* Updated to Next.js 16.x
-* Fixed all reported minor bugs
-
-### Version 2.0.2 - [March 25, 2025]
-
-* Upgraded to Next.js 16.x for [CVE-2025-29927](https://nextjs.org/blog/cve-2025-29927) concerns
-* Included overrides vectormap for packages to prevent peer dependency errors during installation.
-* Migrated from react-flatpickr to flatpickr package for React 19 support
-
-### Version 2.0.1 - [February 27, 2025]
-
-#### Update Overview
-
-* Upgraded to Tailwind CSS v4 for better performance and efficiency.
-* Updated class usage to match the latest syntax and features.
-* Replaced deprecated class and optimized styles.
-
-#### Next Steps
-
-* Run npm install or yarn install to update dependencies.
-* Check for any style changes or compatibility issues.
-* Refer to the Tailwind CSS v4 [Migration Guide](https://tailwindcss.com/docs/upgrade-guide) on this release. if needed.
-* This update keeps the project up to date with the latest Tailwind improvements. 🚀
-
-### v2.0.0 (February 2025)
-
-A major update focused on Next.js 16 implementation and comprehensive redesign.
-
-#### Major Improvements
-
-* Complete redesign using Next.js 16 App Router and React Server Components
-* Enhanced user interface with Next.js-optimized components
-* Improved responsiveness and accessibility
-* New features including collapsible sidebar, chat screens, and calendar
-* Redesigned authentication using Next.js App Router and server actions
-* Updated data visualization using ApexCharts for React
-
-#### Breaking Changes
-
-* Migrated from Next.js 14 to Next.js 16
-* Chart components now use ApexCharts for React
-* Authentication flow updated to use Server Actions and middleware
-
-[Read more](https://Faunatic.com/docs/update-logs/nextjs) on this release.
-
-### v1.3.4 (July 01, 2024)
-
-* Fixed JSvectormap rendering issues
-
-### v1.3.3 (June 20, 2024)
-
-* Fixed build error related to Loader component
-
-### v1.3.2 (June 19, 2024)
-
-* Added ClickOutside component for dropdown menus
-* Refactored sidebar components
-* Updated Jsvectormap package
-
-### v1.3.1 (Feb 12, 2024)
-
-* Fixed layout naming consistency
-* Updated styles
-
-### v1.3.0 (Feb 05, 2024)
-
-* Upgraded to Next.js 14
-* Added Flatpickr integration
-* Improved form elements
-* Enhanced multiselect functionality
-* Added default layout component
+* Tables for inventory and transaction history
+* Authentication flows (Sign-in/Sign-up)
+* Dark Mode support 🕶️
 
 ## License
 
