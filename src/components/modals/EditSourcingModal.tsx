@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 interface Transaction {
   id: number;
   animal_request: string;
+  status_order: string;
 }
 
 type Props = {
@@ -21,10 +22,12 @@ export default function EditSourcingModal({
   data,
 }: Props) {
   const [animalRequest, setAnimalRequest] = useState("");
+  const [statusOrder, setStatusOrder] = useState("");
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     if (data) {
       setAnimalRequest(data.animal_request || "");
+      setStatusOrder(data.status_order || "");
     }
   }, [data]);
 
@@ -32,6 +35,7 @@ export default function EditSourcingModal({
   useEffect(() => {
     if (!isOpen) {
       setAnimalRequest("");
+      setStatusOrder("");
     }
   }, [isOpen]);
 
@@ -42,9 +46,10 @@ export default function EditSourcingModal({
       setLoading(true);
 
       await fetch(`/api/transactions/${data.id}`, {
-        method: "PUT", 
+        method: "PUT",
         body: JSON.stringify({
           animal_request: animalRequest,
+          status_order: statusOrder,
         }),
       });
 
@@ -52,6 +57,28 @@ export default function EditSourcingModal({
       onClose();
     } catch (err) {
       console.error("Update gagal:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!data) return;
+
+    const confirmed = confirm("Are you sure you want to delete this sourcing request?");
+    if (!confirmed) return;
+
+    try {
+      setLoading(true);
+
+      await fetch(`/api/transactions/${data.id}`, {
+        method: "DELETE",
+      });
+
+      await onSuccess();
+      onClose();
+    } catch (err) {
+      console.error("Delete gagal:", err);
     } finally {
       setLoading(false);
     }
@@ -77,24 +104,44 @@ export default function EditSourcingModal({
             onChange={(e) => setAnimalRequest(e.target.value)}
             className="w-full p-2 border rounded-lg dark:bg-gray-800 dark:border-gray-700 dark:text-white"
           />
+          <select
+            value={statusOrder}
+            onChange={(e) => setStatusOrder(e.target.value)}
+            className="w-full p-2 border rounded-lg dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+          >
+            <option value="">Select Status</option>
+            <option value="sourcing">Sourcing</option>
+            <option value="pending">Pending</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
         </div>
 
         {/* ACTION */}
-        <div className="flex justify-end gap-2 mt-5">
+        <div className="flex justify-between gap-2 mt-5">
           <button
-            onClick={onClose}
-            className="px-3 py-1 bg-gray-300 dark:bg-gray-700 dark:text-white rounded"
-          >
-            Cancel
-          </button>
-
-          <button
-            onClick={handleSubmit}
+            onClick={handleDelete}
             disabled={loading}
-            className="px-3 py-1 bg-blue-500 text-white rounded disabled:opacity-50"
+            className="px-3 py-1 bg-red-500 text-white rounded disabled:opacity-50 hover:bg-red-600"
           >
-            {loading ? "Saving..." : "Save"}
+            {loading ? "Deleting..." : "Delete"}
           </button>
+          <div className="flex gap-2">
+            <button
+              onClick={onClose}
+              className="px-3 py-1 bg-gray-300 dark:bg-gray-700 dark:text-white rounded"
+            >
+              Cancel
+            </button>
+
+            <button
+              onClick={handleSubmit}
+              disabled={loading}
+              className="px-3 py-1 bg-blue-500 text-white rounded disabled:opacity-50"
+            >
+              {loading ? "Saving..." : "Save"}
+            </button>
+          </div>
         </div>
 
       </div>

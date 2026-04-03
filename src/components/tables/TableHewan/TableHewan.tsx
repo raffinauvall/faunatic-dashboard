@@ -10,7 +10,9 @@ import {
 } from "../../ui/table";
 
 import Badge from "../../ui/badge/Badge";
+import { Pencil } from "lucide-react";
 import AddHewanModal from "@/components/modals/AddHewanModals";
+import EditHewanModal from "@/components/modals/EditHewanModal";
 
 interface Hewan {
   id: number;
@@ -32,6 +34,8 @@ export default function HewanTable() {
   const [ownerFilter, setOwnerFilter] = useState("all");
   const [openModals, setOpenModals] = useState(false);
   const [users, setUsers] = useState([]);
+  const [selected, setSelected] = useState<Hewan | null>(null);
+  const [openEditModal, setOpenEditModal] = useState(false);
 
   useEffect(() => {
     fetch("/api/users")
@@ -39,45 +43,45 @@ export default function HewanTable() {
       .then(setUsers);
   }, []);
 
+  const fetchAnimals = async () => {
+    try {
+      const res = await fetch("/api/animals");
+      const data = await res.json();
+
+      const withData = data.map((a: any) => {
+        const buyTx = a.transactions
+          ?.filter((t: any) => t.type === "beli_hewan")
+          ?.sort(
+            (a: any, b: any) =>
+              new Date(b.transaction_date).getTime() -
+              new Date(a.transaction_date).getTime()
+          )[0];
+
+        const sellTx = a.transactions
+          ?.filter((t: any) => t.type === "jual_hewan")
+          ?.sort(
+            (a: any, b: any) =>
+              new Date(b.transaction_date).getTime() -
+              new Date(a.transaction_date).getTime()
+          )[0];
+
+        return {
+          ...a,
+          profit: (a.sell_price || 0) - (a.buy_price || 0),
+          buy_date: buyTx?.transaction_date || null,
+          sell_date: sellTx?.transaction_date || null,
+        };
+      });
+
+      setAnimals(withData);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchAnimals = async () => {
-      try {
-        const res = await fetch("/api/animals");
-        const data = await res.json();
-
-        const withData = data.map((a: any) => {
-          const buyTx = a.transactions
-            ?.filter((t: any) => t.type === "beli_hewan")
-            ?.sort(
-              (a: any, b: any) =>
-                new Date(b.transaction_date).getTime() -
-                new Date(a.transaction_date).getTime()
-            )[0];
-
-          const sellTx = a.transactions
-            ?.filter((t: any) => t.type === "jual_hewan")
-            ?.sort(
-              (a: any, b: any) =>
-                new Date(b.transaction_date).getTime() -
-                new Date(a.transaction_date).getTime()
-            )[0];
-
-          return {
-            ...a,
-            profit: (a.sell_price || 0) - (a.buy_price || 0),
-            buy_date: buyTx?.transaction_date || null,
-            sell_date: sellTx?.transaction_date || null,
-          };
-        });
-
-        setAnimals(withData);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchAnimals();
   }, []);
 
@@ -120,6 +124,11 @@ export default function HewanTable() {
     );
   }
 
+  const handleEdit = (item: Hewan) => {
+    setSelected(item);
+    setOpenEditModal(true);
+  };
+
   const TableUI = (data: Hewan[]) => (
     <div className="overflow-hidden dark:text-white rounded-xl border border-gray-200 bg-white dark:border-white/10 dark:bg-gray-900 mb-8">
       <div className="max-w-full overflow-x-auto">
@@ -157,6 +166,10 @@ export default function HewanTable() {
 
                 <TableCell isHeader className="px-5 text-start py-3 text-xs font-semibold uppercase">
                   Owner
+                </TableCell>
+
+                <TableCell isHeader className="px-5 text-start py-3 text-xs font-semibold uppercase">
+                  Action
                 </TableCell>
 
               </TableRow>
@@ -207,6 +220,15 @@ export default function HewanTable() {
 
                   <TableCell className="py-3 px-4">
                     {animal.users?.name || "Unknown"}
+                  </TableCell>
+
+                  <TableCell className="py-3 px-4">
+                    <button
+                      onClick={() => handleEdit(animal)}
+                      className="text-blue-700 hover:text-blue-900 rounded"
+                    >
+                      <Pencil size={16} />
+                    </button>
                   </TableCell>
 
                 </TableRow>
@@ -274,6 +296,13 @@ export default function HewanTable() {
         onClose={() => setOpenModals(false)}
         users={users}
         onSuccess={() => location.reload()}
+      />
+
+      <EditHewanModal
+        isOpen={openEditModal}
+        onClose={() => setOpenEditModal(false)}
+        onSuccess={fetchAnimals}
+        data={selected}
       />
     </div>
   );

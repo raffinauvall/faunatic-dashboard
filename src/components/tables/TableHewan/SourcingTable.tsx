@@ -10,7 +10,7 @@ import {
 } from "../../ui/table";
 
 import Badge from "../../ui/badge/Badge";
-import { Pencil } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 import EditSourcingModal from "@/components/modals/EditSourcingModal";
 
 interface Transaction {
@@ -29,19 +29,19 @@ export default function SourcingTable() {
   const [selected, setSelected] = useState<Transaction | null>(null);
   const [openModal, setOpenModal] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await fetch("/api/transactions");
-        const json = await res.json();
-        setData(json);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchData = async () => {
+    try {
+      const res = await fetch("/api/transactions");
+      const json = await res.json();
+      setData(json);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchData();
   }, []);
 
@@ -67,6 +67,20 @@ export default function SourcingTable() {
   const handleEdit = (item: Transaction) => {
     setSelected(item);
     setOpenModal(true);
+  }
+
+  const handleDelete = async (item: Transaction) => {
+    const confirmed = confirm("Are you sure you want to delete this sourcing request?");
+    if (!confirmed) return;
+
+    try {
+      await fetch(`/api/transactions/${item.id}`, {
+        method: "DELETE",
+      });
+      await fetchData();
+    } catch (err) {
+      console.error("Delete gagal:", err);
+    }
   }
 
   return (
@@ -117,26 +131,35 @@ export default function SourcingTable() {
                       {item.users?.name || "Unknown"}
                     </TableCell>
                     <TableCell className="ps-4 pt-3 pb-3">
-                      <button
-                        onClick={() => handleEdit(item)}
-                        className="text-blue-700 rounded"
-                      >
-                        <Pencil size={16}/>
-                      </button>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleEdit(item)}
+                          className="text-blue-700 rounded hover:text-blue-900"
+                        >
+                          <Pencil size={16} />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(item)}
+                          className="text-red-600 rounded hover:text-red-800"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
-      <EditSourcingModal 
-      isOpen={openModal}
-      onClose={() => setOpenModal(false)}
-      onSuccess={fetchData}
-      data={selected}
-      />
           </div>
         </div>
       </div>
+
+      <EditSourcingModal
+        isOpen={openModal}
+        onClose={() => setOpenModal(false)}
+        onSuccess={fetchData}
+        data={selected}
+      />
 
       {/* EMPTY */}
       {sourcingData.length === 0 && (
