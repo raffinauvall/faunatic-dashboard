@@ -1,8 +1,6 @@
 # Faunatic Next.js - Animal & Livestock Management Dashboard
 
-Faunatic is a comprehensive admin dashboard template built on **Next.js and Tailwind CSS**, specifically designed for **animal and livestock management, transactions, and customer tracking**. It provides a feature-rich solution for managing animal inventory, financial transactions, and customer relationships.
-
-![Faunatic - Next.js Dashboard Preview](./banner.png)
+Faunatic is a comprehensive private admin dashboard built on **Next.js and Tailwind CSS**, specifically designed for **managing animal/livestock stock, financial transactions, customer tracking, and inventory operations**. This web application provides a complete solution for stock inventory management, transaction processing, and business analytics.
 
 Faunatic utilizes the power of **Next.js 16** (App Router), **React 19**, **Tailwind CSS v4**, and **Supabase** to deliver a robust and scalable application.
 
@@ -35,49 +33,25 @@ The project implements a complete financial transaction workflow:
 
 ## Overview
 
-Faunatic provides essential UI components and layouts for building feature-rich, data-driven admin dashboards.
+Faunatic is a private dashboard web application designed for comprehensive stock and transaction management. This application enables users to:
 
-### Quick Links
+- **Manage Animal Stock**: Track inventory status (ready, sold, dead) with real-time updates
+- **Process Transactions**: Handle deposits, withdrawals, purchases, and sales with full audit trails
+- **Monitor Profitability**: Analyze profit margins and financial performance
+- **Customer Management**: Maintain detailed customer and user records with transaction history
 
-* [✨ Visit Website](https://Faunatic.com)
-* [📄 Documentation](https://Faunatic.com/docs)
-* [⬇️ Download](https://Faunatic.com/download)
-* [🖌️ Figma Design File (Community Edition)](https://www.figma.com/community/file/1463141366275764364)
-* [⚡ Get PRO Version](https://Faunatic.com/pricing)
+## Code Structure
 
-## Installation
+The codebase is well-organized with clear separation of concerns:
 
-### Prerequisites
+- **Components**: Modular React components for UI elements, forms, tables, and modals
+- **API Routes**: RESTful API endpoints located in `src/app/api/` for all backend operations
+- **Modals**: Dedicated modal components for editing animals, transactions, and sourcing requests
+- **Tables**: Data visualization tables with filtering, sorting, and action capabilities
+- **Hooks**: Custom React hooks for state management and business logic
+- **Context**: Global state management using React Context (Theme, Sidebar)
 
-To get started with Faunatic, ensure you have the following prerequisites installed:
-
-* Node.js 18.x or later (recommended to use Node.js 20.x or later)
-
-### Setup
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/Faunatic/free-nextjs-admin-dashboard.git
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Configure Environment Variables:
-   Create a `.env` file in the root directory and add your Supabase credentials and admin settings:
-   ```env
-   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-   SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-   ADMIN_USERNAME=admin
-   ADMIN_PASSWORD=your_password
-   ```
-
-4. Start the development server:
-   ```bash
-   npm run dev
-   ```
+You can explore the codebase to understand the implementation patterns and customize features to suit your needs.
 
 ## Components
 
@@ -90,9 +64,6 @@ The template includes:
 * Authentication flows (Sign-in/Sign-up)
 * Dark Mode support 🕶️
 
-## License
+## License & Privacy
 
-Faunatic Next.js Free Version is released under the MIT License.
-
-## Support
-If you find this project helpful, please consider giving it a star on GitHub. Your support helps us continue developing and maintaining this template.
+This is a **private dashboard** application. Faunatic Next.js is released under the MIT License.
